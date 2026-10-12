@@ -3,6 +3,7 @@
 	"name": "jupiter-wallet-api",
 	"main": "src/index.ts",
 	"compatibility_date": "2026-10-01",
+	"routes": [{ "pattern": "api-wallet.quoctran.qzz.io", "custom_domain": true }],
 	"d1_databases": [
 		{
 			"binding": "DB",
@@ -31,6 +32,6 @@
 	"vars": {
 		"AUTH0_DOMAIN": "dev-stevenqt.us.auth0.com",
 		"AUTH0_AUDIENCE": "https://jupiter-wallet-api",
-		"ALLOWED_ORIGINS": "http://localhost:5173,https://jupiter-wallet.pages.dev"
+		"ALLOWED_ORIGINS": "http://localhost:5173,https://jupiter-wallet.pages.dev,https://wallet.quoctran.qzz.io"
 	}
 }

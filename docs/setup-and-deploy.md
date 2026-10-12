@@ -156,12 +156,7 @@ Vite bakes the `VITE_*` values into the bundle at build time, so set them when y
 
 ```bash
 cd frontend
-npx wrangler pages project create jupiter-wallet --production-branch main
-VITE_API_URL=https://jupiter-wallet-api.<your-subdomain>.workers.dev \
-VITE_AUTH0_DOMAIN=your-tenant.eu.auth0.com \
-VITE_AUTH0_CLIENT_ID=<spa client id> \
-VITE_AUTH0_AUDIENCE=https://jupiter-wallet-api \
-npm run build
+npx vite build --mode dev
 npx wrangler pages deploy dist --project-name jupiter-wallet
 ```
 
