@@ -154,6 +154,12 @@ Wrangler prints the worker URL, like `https://jupiter-wallet-api.<your-subdomain
 
 Vite bakes the `VITE_*` values into the bundle at build time, so set them when you build:
 
+
+```bash
+npm run deploy
+```
+
+or
 ```bash
 cd frontend
 npx vite build --mode dev

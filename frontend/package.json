@@ -7,7 +7,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "deploy": "tsc --noEmit && vite build --mode dev && wrangler pages deploy dist --project-name jupiter-wallet --branch main"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.28.2",
