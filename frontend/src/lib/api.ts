@@ -21,11 +21,15 @@ const query = (params: Record<string, string | number | string[] | undefined>) =
 
 /** Typed API client. Every call attaches the Auth0 token, and failed calls raise a toast unless `silent`. */
 export const useApi = () => {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
 
   return useMemo(() => {
     const request = async <T>(method: string, path: string, body?: unknown, options: Options = {}): Promise<ApiResult<T>> => {
-      const token = await getAccessTokenSilently({ authorizationParams: { audience: AUDIENCE } });
+      // A session without a refresh token (e.g. created before refresh tokens were enabled) can't renew: sign in again.
+      const token = await getAccessTokenSilently({ authorizationParams: { audience: AUDIENCE } }).catch(async () => {
+        await loginWithRedirect();
+        return new Promise<never>(() => {});
+      });
       const isForm = body instanceof FormData;
       const headers: Record<string, string> = { Authorization: `Bearer ${token}` };
       if (body !== undefined && !isForm) headers["Content-Type"] = "application/json";
@@ -63,7 +67,7 @@ export const useApi = () => {
       deleteIcon: (id: string) => request<{ success: boolean }>("DELETE", `/icons/${id}`),
       uploadIcon: (file: File) => { const form = new FormData(); form.append("file", file); return request<{ iconUrl: string }>("POST", "/icons/upload", form); },
     };
-  }, [getAccessTokenSilently]);
+  }, [getAccessTokenSilently, loginWithRedirect]);
 };
 
 export type Api = ReturnType<typeof useApi>;
