@@ -32,6 +32,6 @@
 	"vars": {
 		"AUTH0_DOMAIN": "dev-stevenqt.us.auth0.com",
 		"AUTH0_AUDIENCE": "https://jupiter-wallet-api",
-		"ALLOWED_ORIGINS": "http://localhost:5173,https://jupiter-wallet.pages.dev,https://wallet.quoctran.qzz.io"
+		"ALLOWED_ORIGINS": "http://localhost:5173,https://money.quoctran.qzz.io,https://money-manager-e4c.pages.dev"
 	}
 }

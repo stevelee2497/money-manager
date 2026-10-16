@@ -59,6 +59,10 @@ docs/      requirements.md  api.md  setup-and-deploy.md
 - Test data is always synthetic. Never use real personal or health data.
 - Frontend: vitest + Testing Library for pure helpers and small components. `npm --prefix frontend test`.
 
+## Shell prompts
+
+Claude Code's "Contains brace with quote character (expansion obfuscation)" check can't be turned off with an allow rule. Avoid triggering it: create or change files with the Write / Edit tools, not heredocs, `python -c` or `sed` with JSON-like `{"…"}` in a Bash command. Keep Bash for short commands (`npm`, `git`, `ls`).
+
 ## Before finishing
 
 ```
