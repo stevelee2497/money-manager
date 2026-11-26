@@ -1,6 +1,6 @@
 # CLAUDE.md — Jupiter Wallet
 
-Standalone wallet and transaction manager (React + Cloudflare Workers + D1 + R2 + Auth0). `frontend/` is a Vite + React + TypeScript SPA (Cloudflare Pages). `backend/` is a Hono Worker on D1 (SQLite) and R2, with Auth0 for login. It was split out of the SourceBase .NET system and is independent of it.
+Standalone wallet and transaction manager (Angular + Cloudflare Workers + D1 + R2 + Auth0). `frontend/` is an Angular (standalone components, signals, zoneless) + TypeScript SPA built with the Angular CLI (Cloudflare Pages). `backend/` is a Hono Worker on D1 (SQLite) and R2, with Auth0 for login. It was split out of the SourceBase .NET system and is independent of it.
 
 - Backend: `backend/` — `npm --prefix /home/ubuntu/jupiter-wallet/backend test | run typecheck | run dev`.
 - Frontend: `frontend/` — `npm --prefix /home/ubuntu/jupiter-wallet/frontend test | run build | run dev`.
@@ -13,7 +13,7 @@ Every decision is checked against this. When two options work, pick the one with
 - No abstraction until the third use. Duplicating a few lines beats a premature helper.
 - No new dependency without a clear reason. Prefer the platform (`fetch`, `Intl`, `crypto.randomUUID`, D1 `batch`) over a library.
 - Flat structure. One file per backend resource, one folder per page.
-- Raw SQL, plain `useState` / `useEffect`, plain `fetch`. No ORM, no state or data-fetching library, no DI container.
+- Raw SQL, plain signals (`signal` / `computed` / `effect`), plain `fetch`. No ORM, no state or data-fetching library (no NgRx, no `HttpClient`), no DI container in the backend.
 - No speculative features, config flags or "future" hooks. Delete dead code instead of commenting it out.
 - A short function that does one thing, with guard clauses and early returns instead of nested `if`.
 - Constants over magic strings. Comments only for the non-obvious "why".
@@ -42,13 +42,14 @@ docs/      requirements.md  api.md  setup-and-deploy.md
 
 ## Frontend conventions
 
-- Reuse the shared classes in `src/index.css` (`.card`, `.btn-primary|secondary|danger`, `.btn-sm`, `.form-input`, `.form-label`, `.badge-*`) and the shared components. Match the original Blazor look exactly: Tailwind v4 defaults, indigo primary, gray neutrals, dark mode via the `dark` class.
-- Render every icon through `<Icon value=... />` (emoji, `<path…/>` SVG fragment, or `http` image URL). Never print an icon value as text.
-- Call the API only through `useApi()` (`lib/api.ts`): it attaches the Auth0 token and shows error toasts. Add one method per endpoint there.
+- One standalone component per file with an inline template; inputs/outputs via `input()` / `output()` / `model()`, state in signals. Hosts use `host: { class: "contents" }` so they don't add a layout box. Modal fields bind with `[(ngModel)]` to signals.
+- Reuse the shared classes in `src/styles.css` (`.card`, `.btn-primary|secondary|danger`, `.btn-sm`, `.form-input`, `.form-label`, `.badge-*`) and the shared components. Match the original Blazor look exactly: Tailwind v4 defaults, indigo primary, gray neutrals, dark mode via the `dark` class.
+- Render every icon through `<app-icon [value]="..." />` (emoji, `<path…/>` SVG fragment, or `http` image URL). Never print an icon value as text.
+- Call the API only through the `Api` service (`inject(Api)`, `lib/api.ts`): it attaches the Auth0 token and shows error toasts. Add one method per endpoint there.
 - Mobile first. Check layouts at 320px and 375px; keep the original `sm` / `md` / `lg` breakpoints.
 - Amounts: `formatAmount` (no decimals, thousands separators). Dates: `dd MMM` in lists.
 - No sidebar. The top bar has two icons: Wallets (home) and Categories.
-- Only `VITE_*` variables reach the browser. None of them is a secret.
+- Only the four `VITE_*` variables reach the browser, baked in as global constants by `scripts/ng.mjs` (declared in `src/env.d.ts`). None of them is a secret. Read them inside functions, not at module top level, so tests can import the module.
 
 ## Testing
 
@@ -57,11 +58,13 @@ docs/      requirements.md  api.md  setup-and-deploy.md
 - Test names keep the original .NET ids (`WALLETS-CREATE-001: ...`). One test file per endpoint under `test/features/<resource>/`.
 - Every behaviour change or bug fix gets a test. Cover 401, validation 400, ownership 404 and the happy path.
 - Test data is always synthetic. Never use real personal or health data.
-- Frontend: vitest + Testing Library for pure helpers and small components. `npm --prefix frontend test`.
+- Frontend: `ng test` (Vitest + jsdom) for pure helpers and small components (`TestBed`). Test files are `*.test.ts` next to the code. `npm --prefix frontend test`.
 
 ## Shell prompts
 
 Claude Code's "Contains brace with quote character (expansion obfuscation)" check can't be turned off with an allow rule. Avoid triggering it: create or change files with the Write / Edit tools, not heredocs, `python -c` or `sed` with JSON-like `{"…"}` in a Bash command. Keep Bash for short commands (`npm`, `git`, `ls`).
+
+Read files with the Read tool (several Read calls in parallel), never with Bash loops, `cat`, `head`, `sed -n` or `echo` chains like `for f in ...; do cat "$f"; done`. Those compound commands always ask for permission. One simple command per Bash call. No `for` loops, and no `&&` / `;` chains mixing in `cd`.
 
 ## Before finishing
 

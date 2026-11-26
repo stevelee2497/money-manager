@@ -1,6 +1,6 @@
 # Setup, run and deploy
 
-Everything runs on Cloudflare's free tier: **Pages** (React app), **Workers** (API), **D1** (SQLite) and **R2** (icon images). Login is **Auth0**.
+Everything runs on Cloudflare's free tier: **Pages** (Angular app), **Workers** (API), **D1** (SQLite) and **R2** (icon images). Login is **Auth0**.
 
 You'll create these once and then reuse them:
 
@@ -152,18 +152,11 @@ Wrangler prints the worker URL, like `https://jupiter-wallet-api.<your-subdomain
 
 ## 8. Deploy the frontend (Pages)
 
-Vite bakes the `VITE_*` values into the bundle at build time, so set them when you build:
+The `VITE_*` values are baked into the bundle at build time. `scripts/ng.mjs` passes them to the Angular CLI as `--define` constants (the Angular builder has no `.env` support of its own). Real environment variables win over the files; for `deploy`, `.env.dev` wins over `.env.local`.
 
-
-```bash
-npm run deploy
-```
-
-or
 ```bash
 cd frontend
-npx vite build --mode dev
-npx wrangler pages deploy dist --project-name jupiter-wallet
+npm run deploy      # builds with .env.dev (+ .env.local), then wrangler pages deploy dist
 ```
 
 The site is at `https://jupiter-wallet.pages.dev`. Make sure that URL is in the Auth0 application URLs (step 2) and in the worker's `ALLOWED_ORIGINS` (step 7). `public/_redirects` makes deep links like `/categories` fall back to `index.html`.

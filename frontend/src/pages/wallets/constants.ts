@@ -1,5 +1,5 @@
 import type { Wallet } from "../../lib/types";
-import type { SelectOption } from "../../components/SelectInput";
+import type { SelectOption } from "../../components/select-input";
 
 export const TRANSACTION_TYPE = { income: "Income", expense: "Expense" } as const;
 export const PAGE_SIZE = 20;

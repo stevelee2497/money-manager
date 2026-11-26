@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { detectMode } from "./IconModal";
+import { detectMode } from "./icon-modal";
 
 describe("detectMode", () => {
   it("detects svg, image and emoji values", () => {

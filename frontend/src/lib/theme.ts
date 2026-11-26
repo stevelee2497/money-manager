@@ -1,14 +1,13 @@
-import { useState } from "react";
+import { signal } from "@angular/core";
 
 const KEY = "theme";
+const state = signal(document.documentElement.classList.contains("dark"));
 
-export const useTheme = () => {
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
-  const toggle = () => {
-    const next = !dark;
-    document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem(KEY, next ? "dark" : "light");
-    setDark(next);
-  };
-  return { dark, toggle };
+export const dark = state.asReadonly();
+
+export const toggleTheme = () => {
+  const next = !state();
+  document.documentElement.classList.toggle("dark", next);
+  localStorage.setItem(KEY, next ? "dark" : "light");
+  state.set(next);
 };
