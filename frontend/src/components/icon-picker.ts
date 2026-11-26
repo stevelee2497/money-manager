@@ -1,10 +1,11 @@
-import { Component, type OnInit, inject, input, model, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, type OnInit, inject, input, model, signal } from "@angular/core";
 import { Api } from "../lib/api";
 import type { IconItem } from "../lib/types";
 import { Icon } from "./icon";
 
 @Component({
   selector: "app-icon-picker",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Icon],
   host: { class: "block" },
   template: `

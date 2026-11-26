@@ -1,9 +1,10 @@
-import { Component, computed, input, model, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, input, model, signal } from "@angular/core";
 import { Icon } from "./icon";
 import { Chevron, SELECT_PANEL, selectButtonClass, type SelectOption } from "./select-input";
 
 @Component({
   selector: "app-multi-select-input",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Icon, Chevron],
   host: { class: "relative block" },
   template: `

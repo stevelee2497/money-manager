@@ -1,8 +1,9 @@
-import { Component } from "@angular/core";
-import { dismissToast, toasts } from "../lib/toasts";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { ToastService } from "../lib/toasts";
 
 @Component({
   selector: "app-toasts",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
   template: `
     <div class="fixed top-4 right-4 z-100 flex flex-col gap-2 w-80 max-w-[calc(100vw-2rem)] pointer-events-none">
@@ -35,6 +36,10 @@ import { dismissToast, toasts } from "../lib/toasts";
   `,
 })
 export class Toasts {
-  protected readonly toasts = toasts;
-  protected readonly dismiss = dismissToast;
+  private readonly service = inject(ToastService);
+  protected readonly toasts = this.service.toasts;
+
+  protected dismiss(id: string) {
+    this.service.dismiss(id);
+  }
 }

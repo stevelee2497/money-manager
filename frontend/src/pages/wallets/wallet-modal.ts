@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal, type OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { IconPicker } from "../../components/icon-picker";
 import { Modal, ModalActions } from "../../components/modal";
@@ -8,6 +8,7 @@ import { DEFAULT_CURRENCY, optionalText } from "./constants";
 
 @Component({
   selector: "app-wallet-modal",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, IconPicker, Modal, ModalActions],
   template: `
     <app-modal [title]="wallet() ? 'Edit Wallet' : 'Add Wallet'" [error]="error()" (close)="close.emit()">

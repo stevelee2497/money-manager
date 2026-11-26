@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CurrencyInput } from "../../components/currency-input";
 import { Modal, ModalActions } from "../../components/modal";
@@ -10,6 +10,7 @@ import { SELECT_WALLET_OPTION, optionalText, walletOption } from "./constants";
 
 @Component({
   selector: "app-transfer-modal",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, CurrencyInput, Modal, ModalActions, SelectInput],
   template: `
     <app-modal title="Transfer Funds" [error]="error()" (close)="close.emit()">

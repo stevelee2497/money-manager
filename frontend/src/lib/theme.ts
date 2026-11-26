@@ -1,13 +1,18 @@
-import { signal } from "@angular/core";
+import { DOCUMENT, Injectable, inject, signal } from "@angular/core";
 
 const KEY = "theme";
-const state = signal(document.documentElement.classList.contains("dark"));
 
-export const dark = state.asReadonly();
+/** Dark mode via the `dark` class on <html>; index.html applies the saved choice before Angular boots. */
+@Injectable({ providedIn: "root" })
+export class ThemeService {
+  private readonly root = inject(DOCUMENT).documentElement;
+  private readonly state = signal(this.root.classList.contains("dark"));
+  readonly dark = this.state.asReadonly();
 
-export const toggleTheme = () => {
-  const next = !state();
-  document.documentElement.classList.toggle("dark", next);
-  localStorage.setItem(KEY, next ? "dark" : "light");
-  state.set(next);
-};
+  toggle() {
+    const next = !this.state();
+    this.root.classList.toggle("dark", next);
+    localStorage.setItem(KEY, next ? "dark" : "light");
+    this.state.set(next);
+  }
+}

@@ -1,0 +1,139 @@
+@if (error()) {
+  <div class="mb-4 rounded-md bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">{{ error() }}</div>
+}
+@if (loading()) {
+  <app-spinner />
+} @else {
+  <div class="flex flex-col lg:flex-row gap-0 lg:gap-4 mb-6">
+    <div class="flex flex-1 flex-col gap-4">
+      <div class="card bg-linear-to-r from-indigo-600 to-indigo-500 text-white cursor-pointer transition-all" [class]="selected().length === 0 ? 'ring-4 ring-white/40' : 'hover:opacity-90'" (click)="selectAll()">
+        <div class="text-sm font-medium text-indigo-100 mb-2">Total Balance</div>
+        <div class="text-3xl sm:text-4xl font-bold">{{ formatAmount(totalBalance()) }}</div>
+      </div>
+
+      @if (wallets().length > 0) {
+        <app-pie-chart [wallets]="wallets()" [selectedIds]="selected()" />
+      }
+
+      <div class="grid grid-cols-2 gap-2">
+        <div class="rounded-lg bg-green-50 dark:bg-green-900/30 px-4 py-3">
+          <div class="text-xs text-green-600 dark:text-green-400 font-medium mb-0.5">Monthly Income</div>
+          <div class="text-xl font-bold text-green-700 dark:text-green-400">{{ formatAmount(summary().totalIncome) }}</div>
+        </div>
+        <div class="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-3">
+          <div class="text-xs text-red-600 dark:text-red-400 font-medium mb-0.5">Monthly Expense</div>
+          <div class="text-xl font-bold text-red-700 dark:text-red-400">{{ formatAmount(summary().totalExpense) }}</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2 mb-3">
+        @for (w of wallets(); track w.id) {
+          @let isSelected = selected().includes(w.id);
+          <div class="relative rounded-lg border-2 cursor-pointer transition-all p-2 md:p-3 flex flex-col gap-1 md:gap-1.5 justify-between" [class]="isSelected ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-indigo-300 hover:bg-gray-50 dark:hover:bg-gray-700'" (click)="toggleWallet(w.id)">
+            <div class="absolute top-1.5 right-1.5 flex gap-1">
+              <button class="text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400" (click)="$event.stopPropagation(); walletForm.set({ wallet: w })" title="Edit"><app-glyph size="w-3.5 h-3.5" [d]="paths.edit" /></button>
+              <button class="text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400" (click)="$event.stopPropagation(); deletingWallet.set(w)" title="Delete"><app-glyph size="w-3.5 h-3.5" [d]="paths.trash" /></button>
+            </div>
+            <div class="flex items-center justify-start gap-1">
+              <span class="text-xl leading-none"><app-icon [value]="w.icon" fallback="👛" size="w-6 h-6" emojiClass="" /></span>
+            </div>
+            <div class="text-xs font-semibold truncate" [class]="isSelected ? 'text-indigo-700 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-200'">{{ w.name }}</div>
+            <div class="text-sm font-bold" [class]="isSelected ? 'text-indigo-700 dark:text-indigo-400' : 'text-gray-900 dark:text-gray-100'">{{ formatAmount(w.balance) }}</div>
+          </div>
+        }
+        <div class="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 cursor-pointer transition-all p-3 flex flex-col items-center justify-center gap-1.5 text-gray-400 dark:text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400" (click)="walletForm.set({ wallet: null })">
+          <app-glyph size="w-5 h-5" [d]="paths.plus" />
+          <span class="text-xs font-medium">Add Wallet</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-1">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <div>
+          @if (selected().length === 0) {
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">All Transactions</h2>
+            <div class="text-sm text-gray-500 dark:text-gray-400">Showing transactions across all wallets</div>
+          } @else if (selectedWallet(); as wallet) {
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ wallet.name }}</h2>
+            <div class="text-sm text-gray-500 dark:text-gray-400">Balance: <span class="font-semibold text-gray-900 dark:text-gray-100">{{ formatAmount(wallet.balance) }} {{ wallet.currency }}</span></div>
+          } @else {
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Selected Wallets</h2>
+            <div class="text-sm text-gray-500 dark:text-gray-400">Showing transactions for {{ selected().length }} wallets</div>
+          }
+        </div>
+      </div>
+
+      <div class="mb-4 flex flex-col gap-3">
+        <div class="flex flex-wrap gap-2">
+          <button [class]="typeFilterClass(typeFilters().length === 0)" (click)="resetFilters()">All</button>
+          <button [class]="typeFilterClass(typeFilters().includes(types.income))" (click)="toggleType(types.income)">Income</button>
+          <button [class]="typeFilterClass(typeFilters().includes(types.expense))" (click)="toggleType(types.expense)">Expense</button>
+          <app-multi-select-input [values]="categoryIds()" (valuesChange)="changeCategories($event)" [options]="categoryOptions()" placeholder="All categories" />
+          <app-multi-select-input [values]="dateFilters()" (valuesChange)="changeDateFilters($event)" [options]="dateRangeOptions" placeholder="All time" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <button class="btn-primary btn w-full" (click)="transactionForm.set({ transaction: null })"><app-glyph size="w-3.5 h-3.5 mr-1" [d]="paths.plus" />Add Transaction</button>
+        <button class="btn-secondary btn w-full" (click)="showTransfer.set(true)"><app-glyph size="w-3.5 h-3.5 mr-1" [d]="paths.transfer" />Transfer</button>
+      </div>
+
+      <div class="card px-3 py-1">
+        @if (loadingTransactions() && transactions().length === 0) {
+          <app-spinner />
+        } @else if (transactions().length === 0) {
+          <div class="text-sm text-gray-400 dark:text-gray-500 py-8 text-center">No transactions found.</div>
+        } @else {
+          <div class="relative">
+            @if (loadingTransactions()) {
+              <div class="absolute inset-0 z-10 flex items-start justify-center pt-10 bg-white/40 dark:bg-gray-900/40 rounded"><app-spinner /></div>
+            }
+            <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-700" [class.blur-sm]="loadingTransactions()" [class.pointer-events-none]="loadingTransactions()" [class.select-none]="loadingTransactions()">
+              @for (t of transactions(); track t.id) {
+                <div class="py-2 flex flex-col sm:flex-row sm:items-center gap-2" [class]="t.isTransfer ? '' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700'" (click)="openTransaction(t)">
+                  <div class="flex items-center gap-3 flex-1 min-w-0">
+                    <div class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700/50 flex items-center justify-center text-lg shrink-0">
+                      <app-icon [value]="categoryIcon(t)" [fallback]="fallbackIcon(t)" size="w-6 h-6" emojiClass="" />
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <div class="font-medium text-gray-900 dark:text-gray-100 truncate">{{ t.isTransfer ? "Transfer" : t.categoryName?.trim() || "Uncategorized" }}</div>
+                      <div class="text-sm text-gray-500 dark:text-gray-400 truncate flex">
+                        {{ t.note?.trim() || "No description" }}
+                        <div class="ml-1 flex flex-wrap items-center gap-1 text-xs italic text-gray-400 dark:text-gray-500">
+                          <span>•</span>
+                          <span>{{ formatDisplayDate(t.date) }}</span>
+                          @if (t.isTransfer) {
+                            <span class="badge-blue hidden lg:block">Transfer</span>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    <div class="font-semibold" [class]="isIncome(t.type) ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">{{ signedAmount(t.amount, t.type) }}</div>
+                  </div>
+                </div>
+              }
+            </div>
+            <app-pagination [currentPage]="page()" [totalItems]="total()" [pageSize]="pageSize" (pageChanged)="page.set($event)" />
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+@if (walletForm(); as form) {
+  <app-wallet-modal [wallet]="form.wallet" (close)="walletForm.set(null)" (saved)="saveWallet()" />
+}
+@if (transactionForm(); as form) {
+  <app-transaction-modal [transaction]="form.transaction" [wallets]="wallets()" [categories]="categories()" [defaultWalletId]="selectedWallet()?.id ?? wallets()[0]?.id ?? ''" (close)="transactionForm.set(null)" (saved)="saveTransaction()" (delete)="requestDeleteTransaction($event)" />
+}
+@if (showTransfer()) {
+  <app-transfer-modal [wallets]="wallets()" [defaultFromId]="selectedWallet()?.id ?? ''" (close)="showTransfer.set(false)" (saved)="saveTransfer()" />
+}
+@if (showCustomRange()) {
+  <app-custom-range-modal [initial]="dateRange()" (close)="closeCustomRange()" (applied)="applyCustomRange($event)" />
+}
+
+<app-confirm-dialog [visible]="!!deletingWallet()" title="Delete wallet" [message]="deleteWalletMessage()" (confirm)="deleteWallet()" (cancel)="deletingWallet.set(null)" />
+<app-confirm-dialog [visible]="!!deletingTransaction()" title="Delete transaction" [message]="deleteTransactionMessage()" (confirm)="deleteTransaction()" (cancel)="deletingTransaction.set(null)" />

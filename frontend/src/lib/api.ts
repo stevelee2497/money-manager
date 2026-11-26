@@ -1,7 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { AuthService } from "@auth0/auth0-angular";
 import { firstValueFrom } from "rxjs";
-import { showError } from "./toasts";
+import { ToastService } from "./toasts";
 import type { ApiError, Category, IconInput, IconItem, Paged, Transaction, TransactionInput, TransactionQuery, TransactionSummary, TransferInput, WalletsResponse } from "./types";
 
 export type ApiResult<T> = { data?: T; error?: ApiError };
@@ -21,6 +21,7 @@ const query = (params: Record<string, string | number | string[] | undefined>) =
 @Injectable({ providedIn: "root" })
 export class Api {
   private readonly auth = inject(AuthService);
+  private readonly toasts = inject(ToastService);
 
   private async request<T>(method: string, path: string, body?: unknown, options: Options = {}): Promise<ApiResult<T>> {
     // A session without a refresh token (e.g. created before refresh tokens were enabled) can't renew: sign in again.
@@ -36,7 +37,7 @@ export class Api {
     const json = text ? JSON.parse(text) : undefined;
     if (res.ok) return { data: json as T };
     const error = json as ApiError;
-    if (!options.silent) showError(error);
+    if (!options.silent) this.toasts.showError(error);
     return { error };
   }
 

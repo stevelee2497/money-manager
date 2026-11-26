@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CurrencyInput } from "../../components/currency-input";
 import { Modal, ModalActions } from "../../components/modal";
@@ -13,6 +13,7 @@ const NO_CATEGORY: SelectOption = { value: "", label: "Select category" };
 
 @Component({
   selector: "app-transaction-modal",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, CurrencyInput, Modal, ModalActions, SelectInput],
   template: `
     <app-modal [title]="transaction() ? 'Edit Transaction' : 'Add Transaction'" [error]="error()" panelClass="max-w-md p-4 md:p-6" (close)="close.emit()">

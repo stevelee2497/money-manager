@@ -1,4 +1,4 @@
-import { Component, inject, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterOutlet } from "@angular/router";
 import { AuthService } from "@auth0/auth0-angular";
@@ -8,6 +8,7 @@ import { TopBar } from "./components/top-bar";
 /** Anonymous visitors are sent to the Auth0 hosted login; there is no login page of our own. */
 @Component({
   selector: "app-root",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, TopBar, Toasts],
   template: `
     @if (authenticated()) {

@@ -42,7 +42,9 @@ docs/      requirements.md  api.md  setup-and-deploy.md
 
 ## Frontend conventions
 
-- One standalone component per file with an inline template; inputs/outputs via `input()` / `output()` / `model()`, state in signals. Hosts use `host: { class: "contents" }` so they don't add a layout box. Modal fields bind with `[(ngModel)]` to signals.
+- One standalone component per file, always `ChangeDetectionStrategy.OnPush`. Inline template when short; pages and other large templates go in a sibling `.html` (`templateUrl`). Inputs/outputs via `input()` / `output()` / `model()`, state in signals. Hosts use `host: { class: "contents" }` so they don't add a layout box. Modal fields bind with `[(ngModel)]` to signals.
+- Load data with `resource({ params, loader })` and refresh with `.reload()`. Never fetch in `effect()`. Shared state lives in `providedIn: "root"` services (`ToastService`, `ThemeService`), not module-level signals.
+- Pages are lazy routes (`loadComponent`) in `src/main.ts`.
 - Reuse the shared classes in `src/styles.css` (`.card`, `.btn-primary|secondary|danger`, `.btn-sm`, `.form-input`, `.form-label`, `.badge-*`) and the shared components. Match the original Blazor look exactly: Tailwind v4 defaults, indigo primary, gray neutrals, dark mode via the `dark` class.
 - Render every icon through `<app-icon [value]="..." />` (emoji, `<path…/>` SVG fragment, or `http` image URL). Never print an icon value as text.
 - Call the API only through the `Api` service (`inject(Api)`, `lib/api.ts`): it attaches the Auth0 token and shows error toasts. Add one method per endpoint there.

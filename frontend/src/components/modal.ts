@@ -1,8 +1,9 @@
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 
 /** Dialog shell. The body is projected; an `<app-modal-actions>` child becomes the footer. */
 @Component({
   selector: "app-modal",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
   template: `
     <div class="fixed inset-0 z-40 flex items-center justify-center">
@@ -28,6 +29,7 @@ export class Modal {
 /** Standard Cancel / Save footer. Projected content (e.g. a Delete button with `mr-auto`) goes on the left. */
 @Component({
   selector: "app-modal-actions",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "flex justify-end gap-3 mt-5" },
   template: `
     <ng-content />

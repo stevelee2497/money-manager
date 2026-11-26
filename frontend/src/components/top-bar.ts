@@ -1,8 +1,8 @@
-import { Component, computed, inject, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { AuthService } from "@auth0/auth0-angular";
-import { dark, toggleTheme } from "../lib/theme";
+import { ThemeService } from "../lib/theme";
 import { Glyph } from "./glyph";
 
 const ICONS = {
@@ -21,6 +21,7 @@ const ACTIVE = "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-ind
 @Component({
   selector: "app-top-bar",
   imports: [RouterLink, RouterLinkActive, Glyph],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
   template: `
     <div class="flex items-center h-12 md:h-16 px-4 md:px-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shrink-0 gap-3">
@@ -29,7 +30,7 @@ const ACTIVE = "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-ind
         <a routerLink="/categories" title="Categories" [class]="link" [routerLinkActive]="active"><app-glyph [d]="icons.tag" size="w-5 h-5 shrink-0" /></a>
       </nav>
       <div class="flex items-center gap-2 md:gap-3 shrink-0">
-        <button (click)="toggleTheme()" class="p-1.5 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle dark mode" [title]="dark() ? 'Switch to light mode' : 'Switch to dark mode'">
+        <button (click)="theme.toggle()" class="p-1.5 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle dark mode" [title]="dark() ? 'Switch to light mode' : 'Switch to dark mode'">
           <app-glyph [d]="dark() ? icons.sun : icons.moon" />
         </button>
         <div class="relative">
@@ -63,8 +64,8 @@ export class TopBar {
   protected readonly icons = ICONS;
   protected readonly link = LINK;
   protected readonly active = ACTIVE;
-  protected readonly dark = dark;
-  protected readonly toggleTheme = toggleTheme;
+  protected readonly theme = inject(ThemeService);
+  protected readonly dark = this.theme.dark;
   protected readonly profileOpen = signal(false);
   protected readonly user = toSignal(this.auth.user$);
   protected readonly name = computed(() => this.user()?.name ?? this.user()?.email ?? "");

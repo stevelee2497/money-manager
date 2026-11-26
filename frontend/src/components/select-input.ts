@@ -1,4 +1,4 @@
-import { Component, computed, input, model, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, input, model, signal } from "@angular/core";
 import { Icon } from "./icon";
 
 export type SelectOption = { value: string; label: string; icon?: string };
@@ -10,6 +10,7 @@ export const selectButtonClass = (open: boolean, disabled?: boolean) => `${BUTTO
 
 @Component({
   selector: "app-chevron",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
   template: `
     <svg class="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500 transition-transform duration-150" [class.rotate-180]="open()" fill="none" stroke="currentColor" viewBox="0 0 20 20">
@@ -23,6 +24,7 @@ export class Chevron {
 
 @Component({
   selector: "app-select-input",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Icon, Chevron],
   host: { class: "relative block" },
   template: `

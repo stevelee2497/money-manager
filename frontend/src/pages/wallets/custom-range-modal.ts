@@ -1,4 +1,4 @@
-import { Component, input, output, signal, type OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Modal } from "../../components/modal";
 import type { Custom } from "../../lib/dateRanges";
@@ -7,6 +7,7 @@ const RANGE_ERROR = "From date must be earlier than or equal to To date.";
 
 @Component({
   selector: "app-custom-range-modal",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, Modal],
   template: `
     <app-modal title="Custom Date Range" [error]="error()" panelClass="max-w-md p-4 md:p-6" (close)="close.emit()">

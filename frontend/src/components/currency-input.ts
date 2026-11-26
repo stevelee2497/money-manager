@@ -1,4 +1,4 @@
-import { Component, computed, model } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, model } from "@angular/core";
 import { formatAmount } from "../lib/format";
 
 const display = (value: number) => (value > 0 ? formatAmount(value) : "");
@@ -6,6 +6,7 @@ const display = (value: number) => (value > 0 ? formatAmount(value) : "");
 /** Digits-only amount field, displayed with thousands separators. Zero shows as empty. */
 @Component({
   selector: "app-currency-input",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
   template: `<input #field class="form-input" placeholder="0" inputmode="numeric" [value]="text()" (input)="change(field)" />`,
 })

@@ -1,7 +1,8 @@
-import { Component, computed, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, input, output } from "@angular/core";
 
 @Component({
   selector: "app-pagination",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
   template: `
     @if (totalPages() > 1) {

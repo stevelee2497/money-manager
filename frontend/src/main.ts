@@ -3,12 +3,10 @@ import { bootstrapApplication } from "@angular/platform-browser";
 import { provideRouter, type Routes } from "@angular/router";
 import { provideAuth0 } from "@auth0/auth0-angular";
 import { App } from "./app";
-import { CategoriesPage } from "./pages/categories/categories-page";
-import { WalletsPage } from "./pages/wallets/wallets-page";
 
 const routes: Routes = [
-  { path: "", component: WalletsPage },
-  { path: "categories", component: CategoriesPage },
+  { path: "", loadComponent: () => import("./pages/wallets/wallets-page").then((m) => m.WalletsPage) },
+  { path: "categories", loadComponent: () => import("./pages/categories/categories-page").then((m) => m.CategoriesPage) },
 ];
 
 bootstrapApplication(App, {

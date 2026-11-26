@@ -1,4 +1,4 @@
-import { Component, computed, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
 import { formatAmount, formatPercent } from "../../lib/format";
 import type { Wallet } from "../../lib/types";
 import { buildPieData, type PieSlice } from "./pieData";
@@ -17,6 +17,7 @@ const slicePaths = (slices: PieSlice[]) => {
 
 @Component({
   selector: "app-pie-chart",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
   template: `
     <div class="card flex flex-col sm:flex-row items-center gap-4 py-3 px-5">

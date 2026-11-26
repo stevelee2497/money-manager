@@ -1,9 +1,10 @@
-import { Component, computed, inject, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, input } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 
 /** Renders an icon value: "<path…/>" is an SVG fragment, "http…" an image URL, anything else an emoji. */
 @Component({
   selector: "app-icon",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
   template: `
     @switch (kind()) {

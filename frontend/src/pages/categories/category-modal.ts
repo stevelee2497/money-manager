@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal, type OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { IconPicker } from "../../components/icon-picker";
 import { Modal, ModalActions } from "../../components/modal";
@@ -11,6 +11,7 @@ const DEFAULT_TYPE: TransactionType = "Expense";
 
 @Component({
   selector: "app-category-modal",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, IconPicker, Modal, ModalActions, SelectInput],
   template: `
     <app-modal [title]="category() ? 'Edit Category' : 'Add Category'" [error]="error()" (close)="close.emit()">

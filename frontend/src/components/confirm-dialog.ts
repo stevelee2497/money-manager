@@ -1,7 +1,8 @@
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 
 @Component({
   selector: "app-confirm-dialog",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
   template: `
     @if (visible()) {

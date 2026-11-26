@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal, type OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Icon } from "../../components/icon";
 import { Modal, ModalActions } from "../../components/modal";
@@ -22,6 +22,7 @@ export const detectMode = (value: string): IconMode => (value.trimStart().starts
 
 @Component({
   selector: "app-icon-modal",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, Icon, Modal, ModalActions, SelectInput],
   template: `
     <app-modal [title]="icon() ? 'Edit Icon' : 'Add Icon'" [error]="error()" panelClass="max-w-lg p-6" (close)="close.emit()">
