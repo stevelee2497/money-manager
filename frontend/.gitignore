@@ -1,6 +1,3 @@
 node_modules
 dist
 .angular
-.env.local
-.env.dev
-.env.example

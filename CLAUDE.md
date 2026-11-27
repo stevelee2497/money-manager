@@ -54,7 +54,7 @@ docs/      requirements.md  api.md  setup-and-deploy.md
 - Mobile first. Check layouts at 320px and 375px; keep the original `sm` / `md` / `lg` breakpoints.
 - Amounts: `formatAmount` (no decimals, thousands separators). Dates: `dd MMM` in lists.
 - No sidebar. The top bar has two icons: Wallets (home) and Categories.
-- Only the four `VITE_*` variables reach the browser, baked in as global constants by `scripts/ng.mjs` (declared in `src/env.d.ts`). None of them is a secret. Read them inside functions, not at module top level, so tests can import the module.
+- Only the values in `src/environments/environment.ts` reach the browser (`environment.development.ts` replaces it for `npm run dev`). None of them is a secret.
 
 ## Testing
 

@@ -1,6 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { AuthService } from "@auth0/auth0-angular";
 import { firstValueFrom } from "rxjs";
+import { environment } from "../environments/environment";
 import { ToastService } from "./toast.service";
 import type { ApiError, ApiOptions, ApiResult, Category, CategoryInput, Created, Deleted, IconInput, IconItem, Paged, Transaction, TransactionInput, TransactionQuery, TransactionSummary, TransferInput, WalletInput, WalletsResponse } from "./types";
 
@@ -22,14 +23,14 @@ export class Api {
 
   private async request<T>(method: string, path: string, body?: unknown, options: ApiOptions = {}): Promise<ApiResult<T>> {
     // A session without a refresh token (e.g. created before refresh tokens were enabled) can't renew: sign in again.
-    const token = await firstValueFrom(this.auth.getAccessTokenSilently({ authorizationParams: { audience: VITE_AUTH0_AUDIENCE } })).catch(async () => {
+    const token = await firstValueFrom(this.auth.getAccessTokenSilently({ authorizationParams: { audience: environment.auth0Audience } })).catch(async () => {
       await firstValueFrom(this.auth.loginWithRedirect());
       return new Promise<never>(() => {});
     });
     const isForm = body instanceof FormData;
     const headers: Record<string, string> = { Authorization: `Bearer ${token}` };
     if (body !== undefined && !isForm) headers["Content-Type"] = "application/json";
-    const res = await fetch(`${VITE_API_URL}/api${path}`, { method, headers, body: body === undefined ? undefined : isForm ? body : JSON.stringify(body) });
+    const res = await fetch(`${environment.apiUrl}/api${path}`, { method, headers, body: body === undefined ? undefined : isForm ? body : JSON.stringify(body) });
     const text = await res.text();
     const json = text ? JSON.parse(text) : undefined;
     if (res.ok) return { data: json as T };

@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --env-file-if-exists=.env.local scripts/ng.mjs serve",
-    "build": "node --env-file-if-exists=.env.local scripts/ng.mjs build",
+    "dev": "ng serve",
+    "build": "ng build",
     "test": "ng test --watch=false",
-    "deploy": "node --env-file-if-exists=.env.local --env-file-if-exists=.env.dev scripts/ng.mjs build && wrangler pages deploy dist --project-name jupiter-wallet --branch main"
+    "deploy": "ng build && wrangler pages deploy dist --project-name jupiter-wallet --branch main"
   },
   "dependencies": {
     "@angular/common": "^22.3.0",

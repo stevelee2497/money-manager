@@ -10,28 +10,17 @@
 			"database_name": "jupiter-wallet-db",
 			"database_id": "ed64c373-5c6a-4eb8-ba76-1a69c69c1aff",
 			"migrations_dir": "migrations"
-		},
-		{
-			"binding": "jupiter_wallet_db",
-			"database_name": "jupiter-wallet-db",
-			"database_id": "ed64c373-5c6a-4eb8-ba76-1a69c69c1aff",
-			"remote": true
 		}
 	],
 	"r2_buckets": [
 		{
 			"binding": "ICONS",
 			"bucket_name": "jupiter-wallet-icons"
-		},
-		{
-			"bucket_name": "jupiter-wallet-icons",
-			"binding": "jupiter_wallet_icons",
-			"remote": true
 		}
 	],
 	"vars": {
 		"AUTH0_DOMAIN": "dev-stevenqt.us.auth0.com",
 		"AUTH0_AUDIENCE": "https://jupiter-wallet-api",
-		"ALLOWED_ORIGINS": "http://localhost:5173,https://money.quoctran.qzz.io,https://money-manager-e4c.pages.dev"
+		"ALLOWED_ORIGINS": "http://localhost:5173,https://money-manager-e4c.pages.dev"
 	}
 }

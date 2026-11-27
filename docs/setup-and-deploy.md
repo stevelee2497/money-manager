@@ -120,17 +120,18 @@ Tests run inside the real Workers runtime (miniflare) against an in-memory D1 an
 
 ```bash
 cd frontend
-cp env.example .env.local         # then edit the values
 npm run dev                       # http://localhost:5173
 ```
 
-`.env.local`:
+Edit `src/environments/environment.development.ts` (used by `npm run dev`) with your values:
 
-```
-VITE_API_URL=http://localhost:8787
-VITE_AUTH0_DOMAIN=your-tenant.eu.auth0.com
-VITE_AUTH0_CLIENT_ID=<spa client id>
-VITE_AUTH0_AUDIENCE=https://jupiter-wallet-api
+```ts
+export const environment = {
+  apiUrl: "http://localhost:8787",
+  auth0Domain: "your-tenant.eu.auth0.com",
+  auth0ClientId: "<spa client id>",
+  auth0Audience: "https://jupiter-wallet-api",
+};
 ```
 
 Sign in through the Auth0 page and you land on the wallets page.
@@ -152,11 +153,11 @@ Wrangler prints the worker URL, like `https://jupiter-wallet-api.<your-subdomain
 
 ## 8. Deploy the frontend (Pages)
 
-The `VITE_*` values are baked into the bundle at build time. `scripts/ng.mjs` passes them to the Angular CLI as `--define` constants (the Angular builder has no `.env` support of its own). Real environment variables win over the files; for `deploy`, `.env.dev` wins over `.env.local`.
+The values in `src/environments/environment.ts` (production) are baked into the bundle at build time; `environment.development.ts` replaces it for `npm run dev`. Commit your production values there (none is a secret).
 
 ```bash
 cd frontend
-npm run deploy      # builds with .env.dev (+ .env.local), then wrangler pages deploy dist
+npm run deploy      # ng build, then wrangler pages deploy dist
 ```
 
 The site is at `https://jupiter-wallet.pages.dev`. Make sure that URL is in the Auth0 application URLs (step 2) and in the worker's `ALLOWED_ORIGINS` (step 7). `public/_redirects` makes deep links like `/categories` fall back to `index.html`.
@@ -169,10 +170,6 @@ The site is at `https://jupiter-wallet.pages.dev`. Make sure that URL is in the 
 |---|---|---|
 | Secret | `CF_API_TOKEN` | Cloudflare API token with *Workers Scripts: Edit*, *D1: Edit*, *Cloudflare Pages: Edit* (and *Workers R2 Storage: Edit* if you create buckets in CI) |
 | Secret | `CF_ACCOUNT_ID` | your Cloudflare account id |
-| Variable | `WALLET_API_URL` | the worker URL from step 7 |
-| Variable | `WALLET_AUTH0_DOMAIN` | Auth0 domain |
-| Variable | `WALLET_AUTH0_CLIENT_ID` | SPA client id |
-| Variable | `WALLET_AUTH0_AUDIENCE` | `https://jupiter-wallet-api` |
 | Variable | `WALLET_PAGES_PROJECT` | `jupiter-wallet` |
 
 Do steps 3, 4 and the first deploy of 7 and 8 by hand once, so the database id, bucket and Pages project exist.
@@ -180,7 +177,7 @@ Do steps 3, 4 and the first deploy of 7 and 8 by hand once, so the database id, 
 ## Troubleshooting
 
 - **Browser says CORS error**: the frontend's exact origin (scheme + host, no trailing slash) is missing from `ALLOWED_ORIGINS`. Redeploy the worker after changing it.
-- **API returns 401 with a valid login**: `AUTH0_AUDIENCE` on the worker differs from `VITE_AUTH0_AUDIENCE`, or `AUTH0_DOMAIN` has a typo or an `https://` prefix (it must be the bare host).
+- **API returns 401 with a valid login**: `AUTH0_AUDIENCE` on the worker differs from `environment.auth0Audience`, or `AUTH0_DOMAIN` has a typo or an `https://` prefix (it must be the bare host).
 - **Auth0 "Callback URL mismatch"**: add the exact URL you opened to Allowed Callback URLs.
 - **`no such table`**: migrations weren't applied to that database. Run `npm run db:migrate:local` or `db:migrate:remote`.
 - **Icon upload fails with 500**: the R2 bucket doesn't exist or its name doesn't match `wrangler.jsonc`.
