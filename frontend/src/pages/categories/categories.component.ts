@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, resource, signal } from "@angular/core";
-import { ConfirmDialog } from "../../components/confirm-dialog";
-import { Glyph } from "../../components/glyph";
-import { Icon } from "../../components/icon";
-import { Spinner } from "../../components/spinner";
-import { Api } from "../../lib/api";
+import { ConfirmDialog } from "../../components/confirm-dialog.component";
+import { Glyph } from "../../components/glyph.component";
+import { Icon } from "../../components/icon.component";
+import { Spinner } from "../../components/spinner.component";
+import { Api } from "../../lib/api.service";
 import type { Category, TransactionType } from "../../lib/types";
-import { CategoryModal } from "./category-modal";
-import { IconLibrary } from "./icon-library";
-import { ADD_PATH, DELETE_PATH, EDIT_PATH, LOCK_PATH } from "./paths";
+import { CategoryModal } from "./components/category-modal.component";
+import { IconLibrary } from "./components/icon-library.component";
+import { ADD_PATH, DELETE_PATH, EDIT_PATH, LOCK_PATH } from "./utils/paths";
 
 const DEFAULT_ICON = "🏷️";
 
@@ -21,9 +21,9 @@ const SECTIONS: { type: TransactionType; title: string; empty: string; badge: st
   imports: [ConfirmDialog, Glyph, Icon, Spinner, CategoryModal, IconLibrary],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
-  templateUrl: "./categories-page.html",
+  templateUrl: "./categories.component.html",
 })
-export class CategoriesPage {
+export class CategoriesComponent {
   private readonly api = inject(Api);
   protected readonly sections = SECTIONS;
   protected readonly defaultIcon = DEFAULT_ICON;

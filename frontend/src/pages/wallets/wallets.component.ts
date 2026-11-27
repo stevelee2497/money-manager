@@ -1,20 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, resource, signal } from "@angular/core";
-import { ConfirmDialog } from "../../components/confirm-dialog";
-import { Glyph } from "../../components/glyph";
-import { Icon } from "../../components/icon";
-import { MultiSelectInput } from "../../components/multi-select-input";
-import { Pagination } from "../../components/pagination";
-import { Spinner } from "../../components/spinner";
-import { Api, type ApiResult } from "../../lib/api";
+import { ConfirmDialog } from "../../components/confirm-dialog.component";
+import { Glyph } from "../../components/glyph.component";
+import { Icon } from "../../components/icon.component";
+import { MultiSelectInput } from "../../components/multi-select-input.component";
+import { Pagination } from "../../components/pagination.component";
+import { Spinner } from "../../components/spinner.component";
+import { Api, type ApiResult } from "../../lib/api.service";
 import { DATE_RANGE, DATE_RANGE_OPTIONS, mergeDateRanges, resolveDateRange, type Custom } from "../../lib/dateRanges";
 import { formatAmount, formatDisplayDate, signedAmount } from "../../lib/format";
 import type { Paged, Transaction, TransactionQuery, TransactionSummary, TransactionType, Wallet } from "../../lib/types";
-import { PAGE_SIZE, TRANSACTION_TYPE } from "./constants";
-import { CustomRangeModal } from "./custom-range-modal";
-import { PieChart } from "./pie-chart";
-import { TransactionModal } from "./transaction-modal";
-import { TransferModal } from "./transfer-modal";
-import { WalletModal } from "./wallet-modal";
+import { CustomRangeModal } from "./components/custom-range-modal.component";
+import { PieChart } from "./components/pie-chart.component";
+import { TransactionModal } from "./components/transaction-modal.component";
+import { TransferModal } from "./components/transfer-modal.component";
+import { WalletModal } from "./components/wallet-modal.component";
+import { PAGE_SIZE, TRANSACTION_TYPE } from "./utils/constants";
 
 type TransactionsResult = ApiResult<Paged<Transaction>> | undefined;
 type SummaryResult = ApiResult<TransactionSummary> | undefined;
@@ -36,9 +36,9 @@ const toggled = <T>(list: T[], item: T) => (list.includes(item) ? list.filter((x
   imports: [ConfirmDialog, Glyph, Icon, MultiSelectInput, Pagination, Spinner, CustomRangeModal, PieChart, TransactionModal, TransferModal, WalletModal],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
-  templateUrl: "./wallets-page.html",
+  templateUrl: "./wallets.component.html",
 })
-export class WalletsPage {
+export class WalletsComponent {
   private readonly api = inject(Api);
   protected readonly paths = ICON_PATHS;
   protected readonly types = TRANSACTION_TYPE;

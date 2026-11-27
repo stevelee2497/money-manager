@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, model, signal } from "@angular/core";
-import { Icon } from "./icon";
-import { Chevron, SELECT_PANEL, selectButtonClass, type SelectOption } from "./select-input";
+import { Icon } from "./icon.component";
+import { Chevron, SELECT_PANEL, selectButtonClass, type SelectOption } from "./select-input.component";
 
 @Component({
   selector: "app-multi-select-input",

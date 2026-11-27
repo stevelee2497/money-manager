@@ -1,7 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { AuthService } from "@auth0/auth0-angular";
 import { firstValueFrom } from "rxjs";
-import { ToastService } from "./toasts";
+import { ToastService } from "./toast.service";
 import type { ApiError, Category, IconInput, IconItem, Paged, Transaction, TransactionInput, TransactionQuery, TransactionSummary, TransferInput, WalletsResponse } from "./types";
 
 export type ApiResult<T> = { data?: T; error?: ApiError };

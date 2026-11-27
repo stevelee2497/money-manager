@@ -23,8 +23,10 @@ Every decision is checked against this. When two options work, pick the one with
 ```
 backend/   src/index.ts (app + middleware)   src/lib/ (auth, errors, validate, db, json)
            src/features/<resource>.ts        migrations/NNNN_name.sql   test/features/<resource>/
-frontend/  src/lib/ (api, format, dateRanges, toasts, theme, types)
-           src/components/ (shared UI)       src/pages/<page>/
+frontend/  src/lib/ (api.service, toast.service, theme.service, format, dateRanges, types)
+           src/components/ (shared UI, *.component.ts)
+           src/pages/<route>/ (<route>.component.{ts,html}, components/ (page-only UI), utils/)
+           src/app.routes.ts (routes)
 docs/      requirements.md  api.md  setup-and-deploy.md
 ```
 
@@ -44,7 +46,8 @@ docs/      requirements.md  api.md  setup-and-deploy.md
 
 - One standalone component per file, always `ChangeDetectionStrategy.OnPush`. Inline template when short; pages and other large templates go in a sibling `.html` (`templateUrl`). Inputs/outputs via `input()` / `output()` / `model()`, state in signals. Hosts use `host: { class: "contents" }` so they don't add a layout box. Modal fields bind with `[(ngModel)]` to signals.
 - Load data with `resource({ params, loader })` and refresh with `.reload()`. Never fetch in `effect()`. Shared state lives in `providedIn: "root"` services (`ToastService`, `ThemeService`), not module-level signals.
-- Pages are lazy routes (`loadComponent`) in `src/main.ts`.
+- Pages are lazy routes (`loadComponent`) in `src/app.routes.ts`. The folder tree mirrors the route tree: `pages/<route>/<route>.component.ts` is the one smart component (route-level state and loading); its page-only UI goes in `components/`, helpers and constants in `utils/`. Don't repeat the route name in child files. Shared UI used by several pages stays in `src/components/`. Every `.html` sits beside the component that owns it.
+- File suffixes: `*.component.ts`, `*.service.ts`; plain helper modules have none.
 - Reuse the shared classes in `src/styles.css` (`.card`, `.btn-primary|secondary|danger`, `.btn-sm`, `.form-input`, `.form-label`, `.badge-*`) and the shared components. Match the original Blazor look exactly: Tailwind v4 defaults, indigo primary, gray neutrals, dark mode via the `dark` class.
 - Render every icon through `<app-icon [value]="..." />` (emoji, `<path…/>` SVG fragment, or `http` image URL). Never print an icon value as text.
 - Call the API only through the `Api` service (`inject(Api)`, `lib/api.ts`): it attaches the Auth0 token and shows error toasts. Add one method per endpoint there.
@@ -60,7 +63,7 @@ docs/      requirements.md  api.md  setup-and-deploy.md
 - Test names keep the original .NET ids (`WALLETS-CREATE-001: ...`). One test file per endpoint under `test/features/<resource>/`.
 - Every behaviour change or bug fix gets a test. Cover 401, validation 400, ownership 404 and the happy path.
 - Test data is always synthetic. Never use real personal or health data.
-- Frontend: `ng test` (Vitest + jsdom) for pure helpers and small components (`TestBed`). Test files are `*.test.ts` next to the code. `npm --prefix frontend test`.
+- Frontend: `ng test` (Vitest + jsdom) for pure helpers and small components. Test files are `*.test.ts` next to the code. Import `describe`/`expect`/`it` from `vitest`. One top-level `describe` per unit (one per exported function for helpers); no "should create" tests; render components with `TestBed.createComponent(X, { bindings: [inputBinding(...)] })`. `npm --prefix frontend test`.
 
 ## Shell prompts
 

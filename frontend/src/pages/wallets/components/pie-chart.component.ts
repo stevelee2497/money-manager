@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
-import { formatAmount, formatPercent } from "../../lib/format";
-import type { Wallet } from "../../lib/types";
-import { buildPieData, type PieSlice } from "./pieData";
+import { formatAmount, formatPercent } from "../../../lib/format";
+import type { Wallet } from "../../../lib/types";
+import { buildPieData, type PieSlice } from "../utils/pie-data";
 
 const point = (turns: number) => `${Math.cos(turns * 2 * Math.PI).toFixed(4)} ${Math.sin(turns * 2 * Math.PI).toFixed(4)}`;
 

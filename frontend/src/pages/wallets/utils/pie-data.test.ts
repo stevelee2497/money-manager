@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
-import type { Wallet } from "../../lib/types";
-import { PIE_COLORS, buildPieData } from "./pieData";
+import type { Wallet } from "../../../lib/types";
+import { PIE_COLORS, buildPieData } from "./pie-data";
 
 const wallet = (id: string, balance: number): Wallet => ({ id, name: `W${id}`, balance, initialBalance: 0, currency: "VND" });
 
 describe("buildPieData", () => {
-  it("returns nothing without wallets", () => expect(buildPieData([], [])).toEqual([]));
+  it("returns nothing without wallets", () => {
+    expect(buildPieData([], [])).toEqual([]);
+  });
 
   it("splits proportionally across all wallets when none selected", () => {
     const slices = buildPieData([wallet("1", 300), wallet("2", 100)], []);

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Modal } from "../../components/modal";
-import type { Custom } from "../../lib/dateRanges";
+import { Modal } from "../../../components/modal.component";
+import type { Custom } from "../../../lib/dateRanges";
 
 const RANGE_ERROR = "From date must be earlier than or equal to To date.";
 

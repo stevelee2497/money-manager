@@ -1,15 +1,11 @@
 import { provideZonelessChangeDetection } from "@angular/core";
 import { bootstrapApplication } from "@angular/platform-browser";
-import { provideRouter, type Routes } from "@angular/router";
+import { provideRouter } from "@angular/router";
 import { provideAuth0 } from "@auth0/auth0-angular";
-import { App } from "./app";
+import { AppComponent } from "./app.component";
+import { routes } from "./app.routes";
 
-const routes: Routes = [
-  { path: "", loadComponent: () => import("./pages/wallets/wallets-page").then((m) => m.WalletsPage) },
-  { path: "categories", loadComponent: () => import("./pages/categories/categories-page").then((m) => m.CategoriesPage) },
-];
-
-bootstrapApplication(App, {
+bootstrapApplication(AppComponent, {
   providers: [
     provideZonelessChangeDetection(),
     provideRouter(routes),

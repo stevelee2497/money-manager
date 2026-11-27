@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, type OnInit, inject, input, model, signal } from "@angular/core";
-import { Api } from "../lib/api";
+import { Api } from "../lib/api.service";
 import type { IconItem } from "../lib/types";
-import { Icon } from "./icon";
+import { Icon } from "./icon.component";
 
 @Component({
   selector: "app-icon-picker",

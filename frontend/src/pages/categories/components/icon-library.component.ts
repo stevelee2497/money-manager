@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, resource, signal } from "@angular/core";
-import { ConfirmDialog } from "../../components/confirm-dialog";
-import { Glyph } from "../../components/glyph";
-import { Icon } from "../../components/icon";
-import { Spinner } from "../../components/spinner";
-import { Api } from "../../lib/api";
-import type { IconGroup, IconItem } from "../../lib/types";
-import { IconModal } from "./icon-modal";
-import { ADD_PATH, DELETE_PATH, EDIT_PATH, LOCK_PATH } from "./paths";
+import { ConfirmDialog } from "../../../components/confirm-dialog.component";
+import { Glyph } from "../../../components/glyph.component";
+import { Icon } from "../../../components/icon.component";
+import { Spinner } from "../../../components/spinner.component";
+import { Api } from "../../../lib/api.service";
+import type { IconGroup, IconItem } from "../../../lib/types";
+import { ADD_PATH, DELETE_PATH, EDIT_PATH, LOCK_PATH } from "../utils/paths";
+import { IconModal } from "./icon-modal.component";
 
 const SECTIONS: { title: string; empty: string; badge: string; groups: IconGroup[] }[] = [
   { title: "Wallet Icons", empty: "No wallet icons yet.", badge: "badge-blue", groups: ["Wallet", "General"] },
@@ -18,7 +18,7 @@ const SECTIONS: { title: string; empty: string; badge: string; groups: IconGroup
   imports: [ConfirmDialog, Glyph, Icon, Spinner, IconModal],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "contents" },
-  templateUrl: "./icon-library.html",
+  templateUrl: "./icon-library.component.html",
 })
 export class IconLibrary {
   private readonly api = inject(Api);

@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { CurrencyInput } from "../../components/currency-input";
-import { Modal, ModalActions } from "../../components/modal";
-import { SelectInput } from "../../components/select-input";
-import { Api } from "../../lib/api";
-import { todayIso } from "../../lib/format";
-import type { Wallet } from "../../lib/types";
-import { SELECT_WALLET_OPTION, optionalText, walletOption } from "./constants";
+import { CurrencyInput } from "../../../components/currency-input.component";
+import { Modal, ModalActions } from "../../../components/modal.component";
+import { SelectInput } from "../../../components/select-input.component";
+import { Api } from "../../../lib/api.service";
+import { todayIso } from "../../../lib/format";
+import type { Wallet } from "../../../lib/types";
+import { SELECT_WALLET_OPTION, optionalText, walletOption } from "../utils/constants";
 
 @Component({
   selector: "app-transfer-modal",

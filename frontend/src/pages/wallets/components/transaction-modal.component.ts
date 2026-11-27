@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { CurrencyInput } from "../../components/currency-input";
-import { Modal, ModalActions } from "../../components/modal";
-import { SelectInput, type SelectOption } from "../../components/select-input";
-import { Api } from "../../lib/api";
-import { todayIso } from "../../lib/format";
-import type { Category, Transaction, TransactionType, Wallet } from "../../lib/types";
-import { TRANSACTION_TYPE, optionalText, walletOption } from "./constants";
+import { CurrencyInput } from "../../../components/currency-input.component";
+import { Modal, ModalActions } from "../../../components/modal.component";
+import { SelectInput, type SelectOption } from "../../../components/select-input.component";
+import { Api } from "../../../lib/api.service";
+import { todayIso } from "../../../lib/format";
+import type { Category, Transaction, TransactionType, Wallet } from "../../../lib/types";
+import { TRANSACTION_TYPE, optionalText, walletOption } from "../utils/constants";
 
 const TYPE_OPTIONS: SelectOption[] = [{ value: TRANSACTION_TYPE.income, label: "🪴 Income" }, { value: TRANSACTION_TYPE.expense, label: "💸 Expense" }];
 const NO_CATEGORY: SelectOption = { value: "", label: "Select category" };

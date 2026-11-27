@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Icon } from "../../components/icon";
-import { Modal, ModalActions } from "../../components/modal";
-import { SelectInput } from "../../components/select-input";
-import { Api } from "../../lib/api";
-import type { IconGroup, IconItem } from "../../lib/types";
+import { Icon } from "../../../components/icon.component";
+import { Modal, ModalActions } from "../../../components/modal.component";
+import { SelectInput } from "../../../components/select-input.component";
+import { Api } from "../../../lib/api.service";
+import type { IconGroup, IconItem } from "../../../lib/types";
 
 export type IconMode = "emoji" | "svg" | "image";
 

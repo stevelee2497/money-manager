@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { IconPicker } from "../../components/icon-picker";
-import { Modal, ModalActions } from "../../components/modal";
-import { SelectInput } from "../../components/select-input";
-import { Api } from "../../lib/api";
-import type { Category, TransactionType } from "../../lib/types";
+import { IconPicker } from "../../../components/icon-picker.component";
+import { Modal, ModalActions } from "../../../components/modal.component";
+import { SelectInput } from "../../../components/select-input.component";
+import { Api } from "../../../lib/api.service";
+import type { Category, TransactionType } from "../../../lib/types";
 
 const TYPE_OPTIONS = [{ value: "Income", label: "Income" }, { value: "Expense", label: "Expense" }];
 const DEFAULT_TYPE: TransactionType = "Expense";

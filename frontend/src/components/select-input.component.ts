@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, model, signal } from "@angular/core";
-import { Icon } from "./icon";
+import { Icon } from "./icon.component";
 
 export type SelectOption = { value: string; label: string; icon?: string };
 

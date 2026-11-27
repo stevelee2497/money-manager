@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/cor
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterOutlet } from "@angular/router";
 import { AuthService } from "@auth0/auth0-angular";
-import { Toasts } from "./components/toasts";
-import { TopBar } from "./components/top-bar";
+import { Toasts } from "./components/toasts.component";
+import { TopBar } from "./components/top-bar.component";
 
 /** Anonymous visitors are sent to the Auth0 hosted login; there is no login page of our own. */
 @Component({
@@ -24,7 +24,7 @@ import { TopBar } from "./components/top-bar";
     }
   `,
 })
-export class App {
+export class AppComponent {
   private readonly auth = inject(AuthService);
   protected readonly authenticated = signal(false);
 
