@@ -12,6 +12,13 @@ export type IconItem = { id: string; value: string; name: string; group: IconGro
 export type ApiError = { traceId?: string; code: string; message: string; errors?: Record<string, string[]> };
 export type Toast = { id: string; code: string; message: string; traceId?: string; createdAt: number };
 
+export type ApiResult<T> = { data?: T; error?: ApiError };
+export type ApiOptions = { silent?: boolean };
+export type Created = { id: string };
+export type Deleted = { success: boolean };
+
+export type WalletInput = { name: string; initialBalance: number; currency: string; icon?: string };
+export type CategoryInput = { name: string; type: string; icon?: string };
 export type TransactionQuery = { page: number; limit: number; walletIds?: string[]; categoryIds?: string[]; type?: TransactionType; dateFrom?: string; dateTo?: string; exclude?: "Transfer" };
 export type TransactionInput = { walletId: string; amount: number; type: TransactionType; date: string; note?: string; categoryId: string };
 export type TransferInput = { fromWalletId: string; toWalletId: string; amount: number; date: string; note?: string };

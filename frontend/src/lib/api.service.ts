@@ -2,10 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { AuthService } from "@auth0/auth0-angular";
 import { firstValueFrom } from "rxjs";
 import { ToastService } from "./toast.service";
-import type { ApiError, Category, IconInput, IconItem, Paged, Transaction, TransactionInput, TransactionQuery, TransactionSummary, TransferInput, WalletsResponse } from "./types";
-
-export type ApiResult<T> = { data?: T; error?: ApiError };
-type Options = { silent?: boolean };
+import type { ApiError, ApiOptions, ApiResult, Category, CategoryInput, Created, Deleted, IconInput, IconItem, Paged, Transaction, TransactionInput, TransactionQuery, TransactionSummary, TransferInput, WalletInput, WalletsResponse } from "./types";
 
 const query = (params: Record<string, string | number | string[] | undefined>) => {
   const search = new URLSearchParams();
@@ -23,7 +20,7 @@ export class Api {
   private readonly auth = inject(AuthService);
   private readonly toasts = inject(ToastService);
 
-  private async request<T>(method: string, path: string, body?: unknown, options: Options = {}): Promise<ApiResult<T>> {
+  private async request<T>(method: string, path: string, body?: unknown, options: ApiOptions = {}): Promise<ApiResult<T>> {
     // A session without a refresh token (e.g. created before refresh tokens were enabled) can't renew: sign in again.
     const token = await firstValueFrom(this.auth.getAccessTokenSilently({ authorizationParams: { audience: VITE_AUTH0_AUDIENCE } })).catch(async () => {
       await firstValueFrom(this.auth.loginWithRedirect());
@@ -42,30 +39,26 @@ export class Api {
   }
 
   getWallets = () => this.request<WalletsResponse>("GET", "/wallets");
-  createWallet = (body: { name: string; initialBalance: number; currency: string; icon?: string }) => this.request<{ id: string }>("POST", "/wallets", body);
-  updateWallet = (id: string, body: { name?: string; icon?: string }) => this.request<{ id: string }>("PATCH", `/wallets/${id}`, body);
-  configureWallet = (id: string, currency: string) => this.request<{ id: string }>("PUT", `/wallets/${id}/config`, { currency });
-  deleteWallet = (id: string) => this.request<{ success: boolean }>("DELETE", `/wallets/${id}`);
+  createWallet = (body: WalletInput) => this.request<Created>("POST", "/wallets", body);
+  updateWallet = (id: string, body: Partial<Pick<WalletInput, "name" | "icon">>) => this.request<Created>("PATCH", `/wallets/${id}`, body);
+  configureWallet = (id: string, currency: string) => this.request<Created>("PUT", `/wallets/${id}/config`, { currency });
+  deleteWallet = (id: string) => this.request<Deleted>("DELETE", `/wallets/${id}`);
 
   getCategories = () => this.request<Category[]>("GET", "/categories");
-  createCategory = (body: { name: string; type: string; icon?: string }) => this.request<{ id: string }>("POST", "/categories", body);
-  updateCategory = (id: string, body: { name?: string; icon?: string }) => this.request<{ id: string }>("PATCH", `/categories/${id}`, body);
-  deleteCategory = (id: string) => this.request<{ success: boolean }>("DELETE", `/categories/${id}`);
+  createCategory = (body: CategoryInput) => this.request<Created>("POST", "/categories", body);
+  updateCategory = (id: string, body: Partial<Pick<CategoryInput, "name" | "icon">>) => this.request<Created>("PATCH", `/categories/${id}`, body);
+  deleteCategory = (id: string) => this.request<Deleted>("DELETE", `/categories/${id}`);
 
   getTransactions = (q: TransactionQuery) => this.request<Paged<Transaction>>("GET", `/transactions${query({ ...q })}`);
   getSummary = (q: { walletIds?: string[]; dateFrom?: string; dateTo?: string }) => this.request<TransactionSummary>("GET", `/transactions/summary${query({ ...q })}`);
-  createTransaction = (body: TransactionInput) => this.request<{ id: string }>("POST", "/transactions", body);
-  updateTransaction = (id: string, body: Partial<TransactionInput>) => this.request<{ id: string }>("PATCH", `/transactions/${id}`, body);
-  deleteTransaction = (id: string) => this.request<{ success: boolean }>("DELETE", `/transactions/${id}`);
-  createTransfer = (body: TransferInput) => this.request<{ id: string }>("POST", "/transfers", body);
+  createTransaction = (body: TransactionInput) => this.request<Created>("POST", "/transactions", body);
+  updateTransaction = (id: string, body: Partial<TransactionInput>) => this.request<Created>("PATCH", `/transactions/${id}`, body);
+  deleteTransaction = (id: string) => this.request<Deleted>("DELETE", `/transactions/${id}`);
+  createTransfer = (body: TransferInput) => this.request<Created>("POST", "/transfers", body);
 
-  getIcons = (group?: string, options?: Options) => this.request<IconItem[]>("GET", `/icons${query({ group })}`, undefined, options);
-  createIcon = (body: IconInput) => this.request<{ id: string }>("POST", "/icons", body);
-  updateIcon = (id: string, body: Partial<IconInput>) => this.request<{ id: string }>("PATCH", `/icons/${id}`, body);
-  deleteIcon = (id: string) => this.request<{ success: boolean }>("DELETE", `/icons/${id}`);
-  uploadIcon = (file: File) => {
-    const form = new FormData();
-    form.append("file", file);
-    return this.request<{ iconUrl: string }>("POST", "/icons/upload", form);
-  };
+  getIcons = (group?: string, options?: ApiOptions) => this.request<IconItem[]>("GET", `/icons${query({ group })}`, undefined, options);
+  createIcon = (body: IconInput) => this.request<Created>("POST", "/icons", body);
+  updateIcon = (id: string, body: Partial<IconInput>) => this.request<Created>("PATCH", `/icons/${id}`, body);
+  deleteIcon = (id: string) => this.request<Deleted>("DELETE", `/icons/${id}`);
+  uploadIcon = (file: File) => this.request<{ iconUrl: string }>("POST", "/icons/upload", [file].reduce((form, f) => (form.append("file", f), form), new FormData()));
 }

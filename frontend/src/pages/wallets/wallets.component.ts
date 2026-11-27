@@ -5,10 +5,10 @@ import { Icon } from "../../components/icon.component";
 import { MultiSelectInput } from "../../components/multi-select-input.component";
 import { Pagination } from "../../components/pagination.component";
 import { Spinner } from "../../components/spinner.component";
-import { Api, type ApiResult } from "../../lib/api.service";
+import { Api } from "../../lib/api.service";
 import { DATE_RANGE, DATE_RANGE_OPTIONS, mergeDateRanges, resolveDateRange, type Custom } from "../../lib/dateRanges";
 import { formatAmount, formatDisplayDate, signedAmount } from "../../lib/format";
-import type { Paged, Transaction, TransactionQuery, TransactionSummary, TransactionType, Wallet } from "../../lib/types";
+import type { ApiResult, Paged, Transaction, TransactionQuery, TransactionSummary, TransactionType, Wallet } from "../../lib/types";
 import { CustomRangeModal } from "./components/custom-range-modal.component";
 import { PieChart } from "./components/pie-chart.component";
 import { TransactionModal } from "./components/transaction-modal.component";
@@ -65,16 +65,6 @@ export class WalletsComponent {
   protected readonly deletingWallet = signal<Wallet | null>(null);
   protected readonly deletingTransaction = signal<Transaction | null>(null);
 
-  protected readonly dateRange = computed(() => mergeDateRanges(this.appliedRanges(), this.custom()));
-  private readonly walletIds = computed(() => (this.selected().length > 0 ? this.selected() : undefined));
-  private readonly query = computed((): TransactionQuery => {
-    const typeFilters = this.typeFilters();
-    const categoryIds = this.categoryIds();
-    const range = this.dateRange();
-    const hasFilter = typeFilters.length > 0 || categoryIds.length > 0;
-    return { page: this.page(), limit: PAGE_SIZE, walletIds: this.walletIds(), type: typeFilters.length === 1 ? typeFilters[0] : undefined, categoryIds: categoryIds.length > 0 ? categoryIds : undefined, dateFrom: range.from ?? undefined, dateTo: range.to ?? undefined, exclude: hasFilter ? "Transfer" : undefined };
-  });
-
   private readonly walletsResource = resource({ loader: () => this.api.getWallets() });
   private readonly categoriesResource = resource({ loader: () => this.api.getCategories() });
   private readonly transactionsResource = resource({ params: () => this.query(), loader: ({ params }) => this.api.getTransactions(params) });
@@ -90,6 +80,11 @@ export class WalletsComponent {
   private readonly lastTransactions = linkedSignal<TransactionsResult, TransactionsResult>({ source: () => this.transactionsResource.value(), computation: (result, previous) => result ?? previous?.value });
   private readonly lastSummary = linkedSignal<SummaryResult, SummaryResult>({ source: () => this.summaryResource.value(), computation: (result, previous) => result ?? previous?.value });
 
+  protected readonly dateRange = computed(() => mergeDateRanges(this.appliedRanges(), this.custom()));
+  private readonly walletIds = computed(() => (this.selected().length > 0 ? this.selected() : undefined));
+  protected readonly selectedWallet = computed(() => (this.selected().length === 1 ? this.wallets().find((w) => w.id === this.selected()[0]) : undefined));
+  protected readonly categoryOptions = computed(() => this.categories().map((c) => ({ value: c.id, label: c.name, icon: c.icon })));
+  protected readonly deleteWalletMessage = computed(() => `Delete '${this.deletingWallet()?.name}'?`);
   protected readonly loading = computed(() => !this.walletsResource.hasValue());
   protected readonly wallets = computed(() => this.walletsResource.value()?.data?.wallets ?? []);
   protected readonly totalBalance = computed(() => this.walletsResource.value()?.data?.totalBalance ?? 0);
@@ -98,6 +93,14 @@ export class WalletsComponent {
   protected readonly total = computed(() => this.lastTransactions()?.data?.total ?? 0);
   protected readonly loadingTransactions = computed(() => this.transactionsResource.isLoading());
   protected readonly summary = computed(() => ({ totalIncome: this.lastSummary()?.data?.totalIncome ?? 0, totalExpense: this.lastSummary()?.data?.totalExpense ?? 0 }));
+
+  private readonly query = computed((): TransactionQuery => {
+    const typeFilters = this.typeFilters();
+    const categoryIds = this.categoryIds();
+    const range = this.dateRange();
+    const hasFilter = typeFilters.length > 0 || categoryIds.length > 0;
+    return { page: this.page(), limit: PAGE_SIZE, walletIds: this.walletIds(), type: typeFilters.length === 1 ? typeFilters[0] : undefined, categoryIds: categoryIds.length > 0 ? categoryIds : undefined, dateFrom: range.from ?? undefined, dateTo: range.to ?? undefined, exclude: hasFilter ? "Transfer" : undefined };
+  });
   protected readonly error = computed(() => {
     const walletsError = this.walletsResource.value()?.error;
     const transactionsError = this.transactionsResource.value()?.error;
@@ -105,10 +108,6 @@ export class WalletsComponent {
     if (transactionsError) return transactionsError.message ?? "Failed to load transactions.";
     return this.actionError();
   });
-
-  protected readonly selectedWallet = computed(() => (this.selected().length === 1 ? this.wallets().find((w) => w.id === this.selected()[0]) : undefined));
-  protected readonly categoryOptions = computed(() => this.categories().map((c) => ({ value: c.id, label: c.name, icon: c.icon })));
-  protected readonly deleteWalletMessage = computed(() => `Delete '${this.deletingWallet()?.name}'?`);
   protected readonly deleteTransactionMessage = computed(() => {
     const t = this.deletingTransaction();
     return `Delete '${t?.note ?? t?.categoryName ?? "this transaction"}'?`;
